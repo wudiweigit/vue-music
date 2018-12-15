@@ -9,7 +9,7 @@ export default function jsonp (url, data, option){
         originJSONP(url, option, (err, data) => {
             if(!err){
                 resolve(data)  // 成功
-            }else{
+            }else{                                               
                 reject(err)   // 失败
             }
         })

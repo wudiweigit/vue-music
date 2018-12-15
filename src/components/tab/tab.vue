@@ -40,7 +40,7 @@ export default {
         .tab-link
             padding-bottom: 5px
             color: $color-text-l
-        &.router-link-active /*   当某一个当前 router（跳转）被激活时Vue会为其添加一个class样式【router-link-active】    */
+        &.router-link-active /* 设置点击高亮样式：&.router-link-active  【当某一个当前 router（跳转）被激活时Vue会为其添加一个class样式（router-link-active）】   */
             .tab-link
                 color: $color-theme
                 border-bottom: 2px solid $color-theme

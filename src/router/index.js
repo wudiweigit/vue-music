@@ -12,7 +12,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/recommend' //一开始加载重定向根路径
+      redirect: '/recommend' //默认页面重定向到recommend路由中
+
     },
     {
       path: '/recommend',

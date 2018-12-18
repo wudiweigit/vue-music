@@ -38,7 +38,8 @@ module.exports = {
       
       'common': resolve('src/common'),// [  2-1.0  配置别名]
       'components': resolve('src/components'),// [  2-1.2  配置别名]
-      'api': resolve('src/api') //[      2-1.10    ] 
+      'api': resolve('src/api'), //[  2-1.10 ] 
+      'base': resolve('src/base') //[  2-1.11  ]
 
     }
   },

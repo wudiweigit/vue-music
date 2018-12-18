@@ -1,4 +1,4 @@
-// [  2-1.5   jsonp的封装 ==> 首先安装jsonp {npm indsall jsonp --save} ]
+// [  2-1.5   jsonp的封装 ==> 首先安装jsonp {npm indtall jsonp --save} ]
 
 import originJSONP from 'jsonp'  //引入npm安装的jsonp
 

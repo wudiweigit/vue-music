@@ -1,27 +1,23 @@
-<!-- <template>
-  <div id="app">
-    hello world
-  </div>
-</template> -->
+
 
 <template>
   <div id="app">
 
-    <!-- [  2-1.2 ] -->
+
     <m-header></m-header>
 
-    <!-- [  2-1.4 ]  -->
+
     <tab></tab>
-    <!-- [  2-1.3 ]  -->
+
     <router-view></router-view>
     
   </div>
 </template>
 
 <script>
-//[  2-1.2  配置别名]
+
 import MHeader from 'components/m-header/m-header' 
-// [  2-1.4 ]
+
 import Tab from 'components/tab/tab'
  
 export default {

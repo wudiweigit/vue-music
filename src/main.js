@@ -1,21 +1,21 @@
 
-import 'babel-polyfill'//[  2-1.1 【补丁】 对es6中promise等API的转义] 一定要写在最前面
+import 'babel-polyfill'
 
 import Vue from 'vue'
 import App from './App'
-import router from './router'   //[  2-1.3 ] 
+import router from './router'  
 
 Vue.config.productionTip = false
 
 
 
-import 'common/stylus/index.styl'    // [  2-1.0 使用通用样式 ] 
-import fastclick from 'fastclick'//[  2-1.1 解决移动端点击延迟300ms的问题] 
-fastclick.attach(document.body)//[  2-1.1 fastclick在body中使用] 
+import 'common/stylus/index.styl'   
+import fastclick from 'fastclick'
+fastclick.attach(document.body)
 
-/* eslint-disable no-new */
+
 new Vue({
   el: '#app',
-  router,   //[  2-1.3 ] 
+  router,   
   render: h => h(App)
 })

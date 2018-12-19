@@ -1,118 +1,148 @@
-<!-- <template>
-    <div class="slider">
-        <div class="slider-group"> -->
-            <!--   [   2-1.11   ]  外部引入slider时它里面包裹的DOM会被插到插槽的这个部分 -->
-            <!-- <slot>
-
-            </slot>
-        </div>
-        <div class="dots">
-
-        </div>
-    </div>
-</template> -->
-
-
 
 <template>
-        <!-- [   2-1.13   ]给这两个元素加上一个引用 ref="slider"  ref="sliderGroup"  -->
-    <div class="slider" ref="slider">
-        <div class="slider-group" ref="sliderGroup">
-            <slot>
 
-            </slot>
-        </div>
-        <div class="dots">
+<div class="slider" ref="slider">
+    <div class="slider-group" ref="sliderGroup">
+        <slot>
 
-        </div>
+        </slot>
     </div>
+    <div class="dots">
+        <!-- [  2-1.14-4   ] -->
+        <!-- <span class="dot" v-for="item in dots"></span> -->
+
+        <!-- [  2-1.14-6   ] 当 currentPageIndex === index手动/自动切换时为其添加active样式小圆点会变形/大 -->
+        <span class="dot" v-for="(item, index) in dots" :class="{active:currentPageIndex === index}"></span>
+    </div>
+</div>
 </template>
 
 
-<script>
-    
-import BScroll from 'better-scroll'// [   2-1.12   ] 
-
-import {addClass} from 'common/js/dom'  // [   2-1.13-1   ] 
-
-export default {
-    // [   2-1.12   ] 
-    props: {
-        loop: {//可不可以循环轮播
-            type: Boolean,//  接收的数据类型
-            defualt: true, //  默认值
+<script >
+    import {addClass} from 'common/js/dom'
+    import BScroll from 'better-scroll'
+  
+    export default {
+      name: 'slider',
+      props: {
+        loop: {
+          type: Boolean,
+          default: true
         },
-        autoPlay: {//  自动轮播
-            type: Boolean,
-            defualt: true,
+        autoPlay: {
+          type: Boolean,
+          default: true
         },
-        interval: {// 多少毫秒滚动一次
-            type: Number,
-            defualt: 4000,
-        },
-    },
-
-    // better-scroll初始化时不能滚动或者报错的原因初始化时组件没有真正渲染或者高度宽度计算不对
-    // [   2-1.13   ] 
-    mounted() {
-        setTimeout( () => {//通常保证DOM成功渲染我们要添加一个延时操作
-            this._setSliderWidth(),
-            this._initSliderWidth()
-        }, 20 )
-    },
-
-    methods:{
-        _setSliderWidth(){ //设置宽度
-            this.children = this.$refs.sliderGroup.children //获取整个列表元素的个数
-
-            let width = 0  //总宽度
-            let sliderWidth = this.$refs.slider.clientWidth  //获取父容器的宽度
-            for(let i = 0; i<this.children.length; i++){
-                let child = this.children[i]
-
-                addClass(child, 'slider-item')   // [   2-1.13-1   ] 
-                child.style.width = sliderWidth + 'px'  // 设置每个child 的宽度等于父容器的宽度
-                width += sliderWidth  //累加宽度
-            }
-            if(this.loop){  //如果loop为true的话实际上它会左右克隆两个DOM保障它的循环切换所以这里要增加两倍的宽度
-                width += 2 * sliderWidth
-            }
-            this.$refs.sliderGroup.style.width = width + 'px'
-        },
-        _initSliderWidth(){
-            this.slider = new BScroll(this.$refs.slider, {
-                scrollX: true,  //横向滚动
-                scrollY: false,  //不予许纵向滚动
-                momentum: false,  // 
-                snap: true,
-                snapLoop: this.loop,  // 循环等于我们传入的loop
-                snapThreshold: 0.3,
-                snapSpeed: 4000,
-                click: true,  //允许点击
-            })
+        interval: {
+          type: Number,
+          default: 4000
         }
+      },
+      data() {
+        return {
+          dots: [], //  [  2-1.14-2   ]
+           currentPageIndex: 0  //  [  2-1.14-5   ]当前是那个元素
+         }
+      },
+      mounted() {
+        setTimeout(() => {
+          this._setSliderWidth()
+
+          this._initDots()//  [  2-1.14-1   ]
+          this._initSlider()
+
+          if(this.autoPlay){//  [  2-1.15  ] 自动播放
+            this._play()  //[  2-1.15-1  ]如果属性autoPlay为true调用该方法自动播放
+          }
+  
+        }, 20)
+  
+      },
+     
+      methods: {
+        _setSliderWidth(isResize) {
+          this.children = this.$refs.sliderGroup.children
+          console.log(this.children) //  [  2-1.14   ] 手动滚动
+
+          let width = 0
+          let sliderWidth = this.$refs.slider.clientWidth
+          for (let i = 0; i < this.children.length; i++) {
+            let child = this.children[i]
+            addClass(child, 'slider-item')
+  
+            child.style.width = sliderWidth + 'px'
+            width += sliderWidth
+          }
+          if (this.loop) {
+            width += 2 * sliderWidth
+          }
+          this.$refs.sliderGroup.style.width = width + 'px'
+        },
+        _initSlider() {
+          this.slider = new BScroll(this.$refs.slider, {
+            scrollX: true,
+            scrollY: false,
+            momentum: false,  //当快速滑动时是否开启滑动惯性
+            snap: true,  //该组件是给slider组件使用
+            snapLoop: this.loop,   //是可以无缝轮播
+            snapThreshold: 0.3,   //用于手指滑动是页面的阈值
+            snapSpeed: 400   //轮播图切换的动画时间
+          })
+  
+          // [  2-1.14-7   ] 切换时 BScroll提供了一个事件（scrollEnd）
+          this.slider.on( 'scrollEnd', () => {
+            let pageIndex = this.slider.getCurrentPage().pageX //使用BScroll提供的方法【getCurrentPage()】中的pagex属性获取当前第几个子元素
+            // console.log( pageIndex)
+            if(this.loop){ //之前说了 loop 会复制 2个DOM元素
+              pageIndex -=1
+            }
+            this.currentPageIndex = pageIndex
+
+
+            if(this.autoPlay){//[  2-1.15-3  ] 每次轮播前清除一次
+              clearTimeout(this.timer)
+              this._play()
+
+            }
+
+
+          } )
+
+        },
+        _initDots() { //  [  2-1.14-3  ]
+          this.dots = new Array(this.children.length) 
+        },
+        _play(){//  [  2-1.15-2  ]
+          let pageIndex = this.currentPageIndex + 1
+          if(this.loop){
+            pageIndex += 1
+          }
+          this.timer = setTimeout(() => {
+            this.slider.goToPage(pageIndex, 0, 400) //调用BScroll提供的方法goToPage
+          }, this.interval )
+        }
+
+        
+       
+      }
     }
-}
-
-
-
-</script>
+  </script>
 
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
 @import "~common/stylus/variable";
 
-.slider
+  .slider
     min-height: 1px
     .slider-group
-        position: ralative
+        position: relative
         overflow: hidden
         white-space: nowrap
         .slider-item
-            float: left
-            box-sizing: border-box
-            overflow: hidden
-            text-align: center
+                float: left
+                box-sizing: border-box
+                overflow: hidden
+                text-align: center
             a
                 display: block
                 width: 100%
@@ -121,7 +151,7 @@ export default {
             img
                 display: block
                 width: 100%
-    .dodts
+    .dots
         position: absolute
         right: 0
         left: 0
@@ -129,7 +159,7 @@ export default {
         text-align: center
         font-size: 0
         .dot
-            dispaly: inline-block
+            display: inline-block
             margin: 0 4px
             width: 8px
             height: 8px

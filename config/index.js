@@ -10,7 +10,21 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+
+    proxyTable: {
+      // [    2-1.23-2  方法二：跨域代理处理，用官方的代理 ]
+      // '/':{
+      //   target: 'https://c.y.qq.com',
+      //   secure: false,
+      //   changeOrigin: true,
+      //   pathRewrite: {
+      //     '^/api': '/'
+      //   },
+      //   headers: {
+      //     referer: 'https://y.qq.com/'
+      //   }
+      // }
+    },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST

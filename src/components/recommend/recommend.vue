@@ -26,7 +26,7 @@
 
 
 <script>  
-import {getRecommend} from 'api/recommend'
+import {getRecommend, getDiscList} from 'api/recommend' //[    2-1.23-1   ] 引入getDiscList
 import {ERR_OK} from 'api/config'
 
 import Slider from 'base/slider/slider'
@@ -35,6 +35,8 @@ import Slider from 'base/slider/slider'
 export default {
     created() {
         this._getRecommend()
+
+        this._getDiscList()//[    2-1.23   ]调用该方法获取歌单数据
     },
     methods: {
         _getRecommend(){
@@ -45,7 +47,17 @@ export default {
                     this.recommends = res.data.slider
                 }
             } )
+        },
+
+        _getDiscList(){//[    2-1.23-1   ]
+            getDiscList().then((res) => {
+                if(res.code === ERR_OK){//请求接口时jsonp请求是被客户服务端拒绝的是因为在请求头部（Request Header）它有一个Host和Referer的限制而前端是不能直接修改Request Header的  ==》解决 ：需要通过后端代理的方式解决（有两种方法：1.在buil/webpack.dev.conf.js中配置 2.在config/index.js中的proxyTable属性加入代理相关的配置【用官方的代理】 ）
+                    console.log(res.data.list)
+                }
+            })
         }
+        
+        
     },
 
     data(){
@@ -60,9 +72,6 @@ export default {
 
 
 </script>
-
-
-
 
 
 

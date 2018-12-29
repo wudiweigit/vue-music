@@ -9,7 +9,6 @@
                     <slider>
                         <div v-for="item in recommends">
                             <a :href="item.linkUrl">
-                                    <!-- [  2-1.27-2  ] 由于我们在scroll.vuez组件中调用了BScroll中props属性click设置为true导致与fastclick插件点击事件有冲突只需要为其img添加fastclick插件中提供的样式needsclick-->
                                 <img class="needsclick" @load="loadImage" :src="item.picUrl">
                             </a>
                         </div>
@@ -21,8 +20,7 @@
                            
                         <li class="item" v-for="item in discList">
                             <div class="icon">
-                                <!-- [  2-1.27-1  ] 先在main.js引入之后在使用图片的地方将:src换成v-lazy-->
-                                <!-- <img width="60" height="60" :src="item.imgurl"> -->
+                               
                                 <img width="60" height="60" v-lazy="item.imgurl">
                             </div>
                             <div class="text">
@@ -35,7 +33,7 @@
                 </div>
             </div>
 
-            <!-- [  2-1.28-2  ]  -->
+
             <div class="loading-container" v-show="!discList.length">
                 <loading></loading>
             </div>
@@ -51,7 +49,7 @@ import {getRecommend, getDiscList} from 'api/recommend'
 import {ERR_OK} from 'api/config'
 import Slider from 'base/slider/slider'
 import Scroll from 'base/scroll/scroll'
-import Loading from 'base/loading/loading' //[  2-1.28-1  ] 
+import Loading from 'base/loading/loading' 
 
 export default {
     created() {

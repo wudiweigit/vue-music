@@ -18,8 +18,8 @@ export function hasClass(el, className){
 }
 
 
-// [    2-1.37-2    ]获取点击元素的index
-export function getData(el, name, val){//val是一个扩展出来的参数表示如果传过来有值我就set否则就get
+
+export function getData(el, name, val){
     const prefix = 'data-'
     name = prefix + name
     if(val){

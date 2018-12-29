@@ -26,9 +26,8 @@ export default {
             defualt: null,
         },
         
-        //[    2-1.39    左右有个联动的效果=》滚动某区域时点亮某个字母【我要实时知道它的滚动位置然后根据其滚动位置来算到它落在左侧的那个区间最后找出那个之母高亮】
         listenScroll: {
-            type: Boolean,//这个属性是让我们的scroll要不要监听滚动事件
+            type: Boolean,
             default: false
         }
     },
@@ -49,11 +48,10 @@ export default {
             })
 
 
-            // [    2-1.39-1   ]
 
-            if(this.listenScroll){// 如果是true就监听了scroll
-                let me = this//指vue实例的this
-                this.scroll.on('scroll', (pos) => {//this.scroll.on这里的this是指向scroll
+            if(this.listenScroll){
+                let me = this
+                this.scroll.on('scroll', (pos) => {
 
                     me.$emit('scroll', pos)
                 })

@@ -43,7 +43,7 @@
     },
     mounted() {
       setTimeout(() => {
-        this._setSliderWidth()  /
+        this._setSliderWidth()
 
         this._initDots()
         this._initSlider()

@@ -1,6 +1,6 @@
 
 
-// [  2-1.29 ]
+
 import jsonp from 'common/js/jsonp'
 import {commonParams, options} from './config'
 

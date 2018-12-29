@@ -2,7 +2,12 @@
 <template>
     <div class="singer">
 
-        <list-view :data="singers"></list-view>
+        <!-- <list-view :data="singers" ></list-view> -->
+
+        <!-- [  3-1.1-4 ] @select="selectSinger"-->
+        <list-view :data="singers" @select="selectSinger"></list-view>
+        <!-- [  3-1.1-1 ] -->
+        <router-view></router-view>
     </div>
 </template>
 
@@ -12,6 +17,8 @@
 import {getSingerList} from 'api/singer'
 import {ERR_OK} from 'api/config.js'
 import Singer from 'common/js/singer' 
+
+import {mapMutations} from 'vuex'  //[  3-2.1  ] mapMutations是由vuex提供的语法糖来减少不必要的代码【对mutations做了一些封装】
 
 import ListView from 'base/listview/listview'  
 
@@ -27,6 +34,12 @@ export default {
         this._getSingerList()
     },
     methods: {
+        selectSinger(singer){   //[  3-1.1-5 ]
+            this.$router.push({
+                path: '/singer/${singer.id}'
+            })
+            this.setSinger(singer)  //[  3-2.1-2  ] 
+        },
         _getSingerList(){
             getSingerList().then((res) => {
                 if(res.code === ERR_OK){
@@ -80,7 +93,11 @@ export default {
                 return a.title.charCodeAt(0) -b.title.charCodeAt(0)
             }) 
             return hot.concat(ret)
-        }
+        },
+
+        ...mapMutations({ //[  3-2.1-1  ] 通过扩展运算符方式来掉mapMutations来做一个映射
+            setSinger: 'SET_SINGER'  //把mutations的修改来映射成一个方法名
+        })
     },
     components: {
         ListView,

@@ -3,7 +3,9 @@ import 'babel-polyfill'
 
 import Vue from 'vue'
 import App from './App'
-import router from './router'  
+import router from './router' 
+
+import store from './store'  //[  3-2  ] store初始化
 
 Vue.config.productionTip = false
 
@@ -21,6 +23,7 @@ Vue.use(VueLazyLoad, {
 
 new Vue({
   el: '#app',
-  router,   
+  router,  
+  store, //[  3-2  ] store初始化 
   render: h => h(App)
 })

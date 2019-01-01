@@ -36,7 +36,7 @@ export default {
     methods: {
         selectSinger(singer){   //[  3-1.1-5 ]
             this.$router.push({
-                path: '/singer/${singer.id}'
+                path: `/singer/${singer.id}`
             })
             this.setSinger(singer)  //[  3-2.1-2  ] 
         },

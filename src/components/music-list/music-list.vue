@@ -3,7 +3,9 @@
 
 <template>
     <div class="music-list">
-        <div class="back">
+           <!-- [   3-10  ]  @click="back"-->
+        <!-- <div class="back"> -->
+        <div class="back" @click="back">
             <i class="icon-back"></i>
         </div>
         <!-- [  3-4-1.2  ] v-html="title" 由于数据里面有些字符所以用v-html转义字符指令  :style="bgStyle"-->
@@ -11,6 +13,17 @@
         <h1 class="title" v-html="title"></h1>
         <!-- <div class="bg-image"> -->   <!-- [  3-5.3  ] ref="bgImage" -->
         <div class="bg-image" :style="bgStyle" ref="bgImage">
+            <!-- [   3-11 ] 添加一个播放按钮-->
+            <div class="play-wrapper">
+                <!-- [   3-11.1 ] v-show="songs.length > 0"列表完成渲染之后图标和字体才显示  ref="playBtn"-->
+                <!-- <div class="play"> -->
+                <div class="play" v-show="songs.length > 0" ref="playBtn">
+                    <i class="icon-play">
+                        <span class="text">随机播放全部</span>
+                    </i>
+                </div>
+            </div>
+
             <!-- [   3-8  ] -->
             <!-- <div class="filter"></div> -->
             <div class="filter" ref="filter"></div>
@@ -25,6 +38,11 @@
         <scroll :data="songs" class="list" ref="list" :probe-type="probeType" :listen-scroll="listenScroll" @scroll="scroll"> <!-- 为计算高度将songs作为data传进去  -->
             <div class="song-list-wrapper">
                 <song-list :songs="songs"></song-list>
+            </div>
+
+            <!-- [   3-12 ] -->
+            <div class="loading-container" v-show="!songs.length">
+                <loading></loading>
             </div>
         
         </scroll>
@@ -139,10 +157,12 @@ export default {
 import Scroll from 'base/scroll/scroll' 
 import SongList from 'base/song-list/song-list'  
 import {prefixStyle} from 'common/js/dom'   // [ 3-9.1 ]
+import Loading from 'base/loading/loading'  //[   3-12 ]
 
 const RESERVED_HEIGHT = 40  
 const transform = prefixStyle('transform')   // [ 3-9.1 ]
 const backdrop = prefixStyle('backdrop-filter')   // [ 3-9.1 ]
+
 
 export default {
     props: {  
@@ -175,6 +195,7 @@ export default {
         
         this.imageHeight = this.$refs.bgImage.clientHeight 
         this.minTranslateY = -this.imageHeight + RESERVED_HEIGHT
+
     },
     created() {
         this.probeType = 3 
@@ -183,6 +204,10 @@ export default {
     methods: {
         scroll(pos){
             this.scrollY = pos.y
+        },
+        // [  3-10.1  ]
+        back(){
+            this.$router.back()
         }
     },
     watch: {
@@ -199,9 +224,13 @@ export default {
                 this.$refs.bgImage.style.paddingTop = 0
                 this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
 
+                this.$refs.playBtn.style.display = 'none' //[   3-11.1 ]滚动到顶部隐藏
+
             }else {
                 this.$refs.bgImage.style.paddingTop = '70%'
                 this.$refs.bgImage.style.height = 0
+
+                this.$refs.playBtn.style.display = ''//[   3-11.1 ] x显示
             }
             
 
@@ -222,7 +251,7 @@ export default {
             // this.$refs.filter.style['backdrop-filter'] = `scale(${blur})` 
             // this.$refs.filter.style['webkitBackdrop-filter'] = `scale(${blur})`
 
-            
+
             this.$refs.filter.style['backdrop'] = `scale(${blur})` // [ 3-9.1 ]
             // this.$refs.filter.style['webkitBackdrop-filter'] = `scale(${blur})`
 
@@ -233,6 +262,7 @@ export default {
     components: {
         Scroll, 
         SongList, 
+        Loading,// [   3-12 ]
     }
 }
 </script>

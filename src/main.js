@@ -24,6 +24,6 @@ Vue.use(VueLazyLoad, {
 new Vue({
   el: '#app',
   router,  
-  store, //[  3-2  ] store初始化 
+  store,
   render: h => h(App)
 })

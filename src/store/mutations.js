@@ -1,13 +1,55 @@
 
 
 
-//[  3-2  ] store初始化
-import * as types from './mutation-types'//引入常量
+
+import * as types from './mutation-types'
 
 const matutaions = {
-    [types.SET_SINGER](state, singer){  // [方法名](状态, 参数)
+    // [types.SET_SINGER](state, singer){
+    //     state.singer = singer
+    // },
+    // //[  3-12.1-3 ]
+    // [types.SET_PLAYING_STATE](state, flag){
+    //     state.playing = flag
+    // },
+    // [types.SET_FULL_SCREEN](state, flag){
+    //     state.fullScreen = flag
+    // },
+    // [types.SET_PLAYLIST](state, list){
+    //     state.playlist = list
+    // },
+    // [types.SET_SEQUENCE_LIST](state, list){
+    //     state.sequenceList = list
+    // },
+    // [types.SET_PLAY_MODE](state, mode){
+    //     state.mode = mode
+    // },
+    // [types.SET_CURRENT_INDEX](state, index){
+    //     state.currentIndex = index
+    // },
+
+    [types.SET_SINGER](state, singer) {
         state.singer = singer
-    }
+      },
+      [types.SET_PLAYING_STATE](state, flag) {
+        state.playing = flag
+      },
+      [types.SET_FULL_SCREEN](state, flag) {
+        state.fullScreen = flag
+      },
+      [types.SET_PLAYLIST](state, list) {
+        state.playlist = list
+      },
+      [types.SET_SEQUENCE_LIST](state, list) {
+        state.sequenceList = list
+      },
+      [types.SET_PLAY_MODE](state, mode) {
+        state.mode = mode
+      },
+      [types.SET_CURRENT_INDEX](state, index) {
+        state.currentIndex = index
+      },
+
 }
 
 

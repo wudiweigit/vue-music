@@ -1,32 +1,11 @@
 <!-- 由于多地复用所以单独拿出来创建个组件 -->
-<!-- [  3-5   ] -->
-<!-- <template>
-    <div class="song-list">
-        <ul>
-
-        </ul>
-    </div>
-</template>
-
-
-<script>
-export default {
-    props: {
-        songs: {
-            type: Array,
-            default: []
-        }
-    }
-    
-}
-</script> -->
 
 
 <template>
     <div class="song-list">
         <ul>
-            <!-- [  3-5.1   ] --> 
-            <li v-for="song in songs" class="item">
+                <!-- [  3-12.2-5 ] @click="selectItem"点击歌曲列表展开播放器传入song和索引-->
+            <li @click="selectItem(song, index)" v-for="(song, index) in songs" class="item">
                 <div class="content">
                     <h2 class="name">{{song.name}}</h2>
                     <p class="desc">{{getDest(song)}}</p>
@@ -47,9 +26,14 @@ export default {
         }
     },
     methods: {
-        getDest(song){  //[  3-5.1-1   ]
+        getDest(song){
             return `${song.singer}。${song.album}`
+        },
+
+        selectItem(item, index){ //[  3-12.2-6 ]
+            this.$emit('select', item, index)
         }
+        
     },
  
 }

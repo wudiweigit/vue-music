@@ -1,4 +1,17 @@
 // 存储所有mutations相关的名字（存储一些mutations相关的字符串常量）
 
-//[  3-2  ] store初始化
-export const SET_SINGER = 'SET_SINGER' //设置歌手常量
+
+export const SET_SINGER = 'SET_SINGER' 
+
+//[  3-12.1-2 ]
+export const SET_PLAYING_STATE = 'SET_PLAYING_STATE'
+
+export const SET_FULL_SCREEN = 'SET_FULL_SCREEN'
+
+export const SET_PLAYLIST = 'SET_PLAYLIST'
+
+export const SET_SEQUENCE_LIST = 'SET_SEQUENCE_LIST'
+
+export const SET_PLAY_MODE = 'SET_PLAY_MODE'
+
+export const SET_CURRENT_INDEX = 'SET_CURRENT_INDEX'

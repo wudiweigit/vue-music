@@ -13,11 +13,11 @@ const portfinder = require('portfinder')
 
 // [    2-1.23-2   ]
 //定义路由
-const express = require('express')
+const express = require('express')//引入express框架模块
 const axios = require('axios')
-const app = express()//名称app根据项目自定义，避免冲突为原则 
-var apiRoutes = express.Router()//手动代理请求定义一个apiRoutes
-app.use('/api', apiRoutes)
+const app = express()///实例化express(名称app根据项目自定义，避免冲突为原则 )
+var apiRoutes = express.Router()//设置路由(手动代理请求定义一个apiRoutes)
+app.use('/api', apiRoutes)  //将路由地址PI注册路由
 
 
 
@@ -45,15 +45,34 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         axios.get(url, {
             headers: {  //通过node请求QQ接口，发送http请求时，修改referer和host
               referer: 'https://y.qq.com/',
-              host: 'c.y.qq.com'
+              host: 'c.y.qq.com'  //访问的域名
             },
             params: req.query //把前端传过来的params，全部给QQ的url
         }).then((response) => {   //成功回调
-            res.json(response.data)   //response是QQ接口返回的，res是我们自己的。所以要把数据输出给浏览器前端
+            res.json(response.data)   ////发送一个JSON响应(response是QQ接口返回的，res是我们自己的。所以要把数据输出给浏览器前端)
         }).catch((e) => {
             console.log(e)
         })
       })
+
+
+
+      app.get('/api/music', function(req, res){
+        var url="https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg"
+
+        axios.get(url, {
+          headers: {  //通过node请求QQ接口，发送http请求时，修改referer和host
+            referer: 'https://y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query //把前端传过来的params，全部给QQ的url
+          }).then((response) => { 
+              res.json(response.data)
+          }).catch((e) => {
+              console.log(e)
+        })
+      })
+
     },
 
 

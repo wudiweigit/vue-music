@@ -2,17 +2,15 @@
 
 <template>
   <div id="app">
-
-
     <m-header></m-header>
-
-
     <tab></tab>
-
     <keep-alive>
       <router-view></router-view>
     </keep-alive>
-    
+
+    <!-- [  3-12.2-1 ] 由于它是一个应用相关的播放器不是任何一个路由相关的东西且在任何一个路由下都能播放切换路由时并不会影响路由的播放所以放在APP.vue组件中--> 
+    <player></player> 
+     
     
   </div>
 </template>
@@ -22,11 +20,13 @@
 import MHeader from 'components/m-header/m-header' 
 
 import Tab from 'components/tab/tab'
+import Player from 'components/player/player'  //[  3-12.2-1 ]
  
 export default {
   components: {
     MHeader,
-    Tab
+    Tab,
+    Player,
   }
 
 

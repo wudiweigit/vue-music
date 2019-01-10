@@ -15,7 +15,7 @@
             >
                 <h2 class="list-group-title">{{group.title}}</h2>
                 <ul>
-                    <!-- [  3-1.1-2 ]  @click="selectItem(item)"-->
+                    
                     <li @click="selectItem(item)" v-for="item in group.items" class="list-group-item">
                     
                         <img class="avatar" v-lazy="item.avatar">
@@ -105,7 +105,7 @@ export default {
     },
 
     methods: { 
-        selectItem(item){  //[  3-1.1-3 ]
+        selectItem(item){ 
             this.$emit('select', item)
         },  
         onShortcutTouchStart(e){   

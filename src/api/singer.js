@@ -23,9 +23,7 @@ export function getSingerList(){
 }
 
 
-
-// [  3-3 ]歌手数据的抓取
-export function getSingerDetail(singerId) {//根据不同传入singerId抓取不同的数据（不同歌手的详情）
+export function getSingerDetail(singerId) {
     const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg'
 
     const data = Object.assign({}, commonParams, {
@@ -38,8 +36,31 @@ export function getSingerDetail(singerId) {//根据不同传入singerId抓取不
       songstatus: 1,
     //   g_tk: 5381,
       g_tk: 1664029744,
-      singermid: singerId
+      singermid: singerId  //传入的不同歌手的Id
     })
   
     return jsonp(url, data, options)
 }
+
+
+import axios from 'axios';
+export function getMusic(songmid) {
+    const url = '/api/music'
+    const data = Object.assign({}, commonParams, {
+          songmid: songmid,
+          filename: 'C400' + songmid + '.m4a',
+          guid: 6319873028, //会变，以实时抓取的数据为准
+          platform: 'yqq',
+          loginUin: 0,
+          hostUin: 0,
+          needNewCode: 0,
+          cid:205361747,
+          uin: 0,
+          format: 'json'
+   })
+   return axios.get(url, {
+          params: data
+   }).then((res) => {
+          return Promise.resolve(res.data)
+   })
+} 

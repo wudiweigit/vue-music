@@ -1,7 +1,9 @@
 
 <template>
-    <div class="singer">
-        <list-view :data="singers" @select="selectSinger"></list-view>
+        <!-- [  3-30-1.2  ]  ref="singer"-->
+    <div class="singer" ref="singer">
+            <!-- [  3-30-1.3  ] ref="list"-->
+        <list-view :data="singers" @select="selectSinger" ref="list"></list-view>
 
         <router-view></router-view>
     </div>
@@ -15,11 +17,14 @@ import {ERR_OK} from 'api/config.js'
 import Singer from 'common/js/singer' 
 
 import {mapMutations} from 'vuex' 
-import ListView from 'base/listview/listview'  
+import ListView from 'base/listview/listview' 
+import {playlistMixin} from 'common/js/mixin' // [  3-30-1.1  ] 
 
 const HOT_NAME = '热门'
 const HOT_SINGER_LEN = 10  
 export default {
+    mixins: [playlistMixin],// [  3-30-1.1  ]  一个组件可以插入多个mixin如果组件中有相同的方法会覆盖掉mixin中的方法
+
     data(){
         return {
             singers: []
@@ -29,6 +34,13 @@ export default {
         this._getSingerList()
     },
     methods: {
+        handlePlaylist(playlist){   // [  3-30-1.2  ]
+            const bottom = playlist.length > 0 ? '60px' : ''   // 如果有的话就设置为60否则为''
+            this.$refs.singer.style.bottom = bottom //底部播放器适配
+            this.$refs.list.refresh() //强制scroll重新计算
+   
+        },
+
         selectSinger(singer){ 
             this.$router.push({
                 path: `/singer/${singer.id}`

@@ -10,7 +10,8 @@
         <div class="bg-image" :style="bgStyle" ref="bgImage">
 
             <div class="play-wrapper">
-                <div class="play" v-show="songs.length > 0" ref="playBtn">
+
+                <div class="play" v-show="songs.length > 0" ref="playBtn" @click="random">
                     <i class="icon-play">
                         <span class="text">随机播放全部</span>
                     </i>
@@ -22,8 +23,7 @@
         <scroll :data="songs" class="list" ref="list" :probe-type="probeType" :listen-scroll="listenScroll" @scroll="scroll">
             <div class="song-list-wrapper">
 
-                <!-- [  3-12.2-7 ] @select="selectItem"-->
-                <!-- <song-list :songs="songs"></song-list> -->
+              
                 <song-list @select="selectItem" :songs="songs"></song-list>
             </div>
             <div class="loading-container" v-show="!songs.length">
@@ -42,14 +42,18 @@ import Scroll from 'base/scroll/scroll'
 import SongList from 'base/song-list/song-list'  
 import {prefixStyle} from 'common/js/dom'   
 import Loading from 'base/loading/loading' 
-import {mapActions} from 'vuex' // [  3-12.2-8 ] 
-
+import {mapActions} from 'vuex' 
 const RESERVED_HEIGHT = 40  
 const transform = prefixStyle('transform')   
 const backdrop = prefixStyle('backdrop-filter')  
 
+import {playlistMixin} from 'common/js/mixin' // [  3-30-1.1  ]
+
 
 export default {
+    
+    mixins: [playlistMixin],// [  3-30-1.1  ]  一个组件可以插入多个mixin如果组件中有相同的方法会覆盖掉mixin中的方法
+
     props: {  
         bgImage: {
             type: String,
@@ -96,14 +100,26 @@ export default {
 
         
         ...mapActions([
-            'selectPlay'// [  3-12.2-9 ]
+            'selectPlay',
+            'randomPlay'  //  [  3-25-1.1 ]
         ]),
         selectItem(item, index){
-            this.selectPlay({// [  3-12.2-10 ]
-                list : this.songs,  //这里是播放整个列表而item只是播放某首歌
+            this.selectPlay({
+                list : this.songs, 
                 index
             })
-        }
+        },
+        random(){ 
+            this.randomPlay({
+                list: this.songs
+            })
+        },
+
+        handlePlaylist(playlist){   // [  3-30-1.2  ]
+            const bottom = playlist.length > 0 ? '60px' : ''   // 如果有的话就设置为60否则为''
+            this.$refs.list.$el.style.bottom = bottom //底部播放器适配
+            this.$refs.list.refresh() //强制scroll重新计算
+        },
 
 
     },

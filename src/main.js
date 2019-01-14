@@ -5,7 +5,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router' 
 
-import store from './store'  //[  3-2  ] store初始化
+import store from './store'  
 
 Vue.config.productionTip = false
 

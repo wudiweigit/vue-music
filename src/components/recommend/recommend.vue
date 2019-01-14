@@ -1,7 +1,8 @@
 
 
 <template>
-    <div class="recommend">
+         <!-- [  3-30-1.2  ] ref="recommend"-->
+    <div class="recommend" ref="recommend">
 
         <scroll class="recommend-content" :data="discList" ref="scroll">
             <div>
@@ -50,8 +51,10 @@ import {ERR_OK} from 'api/config'
 import Slider from 'base/slider/slider'
 import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading' 
+import {playlistMixin} from 'common/js/mixin' // [  3-30-1.1  ] 
 
 export default {
+    mixins: [playlistMixin],// [  3-30-1.1  ]  一个组件可以插入多个mixin如果组件中有相同的方法会覆盖掉mixin中的方法
     created() {
         
         this._getRecommend()
@@ -59,11 +62,16 @@ export default {
         this._getDiscList()
     },
     methods: {
+        handlePlaylist(playlist){   // [  3-30-1.2  ]
+            const bottom = playlist.length > 0 ? '60px' : ''   // 如果有的话就设置为60否则为''
+            this.$refs.recommend.style.bottom = bottom //底部播放器适配
+            this.$refs.scroll.refresh() //强制scroll重新计算
+   
+        },
         _getRecommend(){
             getRecommend().then( (res) => {
                 if(res.code === ERR_OK){
-                    // console.log(res.data.slider)
-
+                
                     this.recommends = res.data.slider
                 }
             } )
@@ -71,7 +79,6 @@ export default {
         _getDiscList(){
             getDiscList().then((res) => {
                 if(res.code === ERR_OK){
-                    // console.log(res.data.list)
 
                     this.discList = res.data.list
                 }

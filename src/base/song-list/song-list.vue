@@ -4,7 +4,7 @@
 <template>
     <div class="song-list">
         <ul>
-                <!-- [  3-12.2-5 ] @click="selectItem"点击歌曲列表展开播放器传入song和索引-->
+               
             <li @click="selectItem(song, index)" v-for="(song, index) in songs" class="item">
                 <div class="content">
                     <h2 class="name">{{song.name}}</h2>
@@ -30,7 +30,7 @@ export default {
             return `${song.singer}。${song.album}`
         },
 
-        selectItem(item, index){ //[  3-12.2-6 ]
+        selectItem(item, index){ 
             this.$emit('select', item, index)
         }
         

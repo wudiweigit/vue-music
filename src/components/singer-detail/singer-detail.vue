@@ -47,7 +47,7 @@ export default {
             }
             getSingerDetail(this.singer.id).then((res) => {
             if(res.code === ERR_OK){
-               // console.log(res.data.list)
+              
                this.songs = this._normallizeSongs(res.data.list)
                console.log(this.songs)
             }
@@ -55,17 +55,15 @@ export default {
         },
 
         _normallizeSongs(list){
-            let ret = []  //返回值
+            let ret = []  
             list.forEach((item) => {
-                let {musicData} = item   //得到music对象
-                // console.log(musicData)
-                //createSong必传两个参数
+                let {musicData} = item 
                 if(musicData.songid && musicData.albummid){  
-                // console.log(getMusic(musicData.songmid))
+                
                 getMusic(musicData.songmid).then((res) => {
-                    // console.log(res)
+                    
                     if(res.code === ERR_OK){
-                        // console.log(res.data)
+                        
                         const svkey = res.data.items
                         const songVkey = svkey[0].vkey
                         const newSong = createSong(musicData, songVkey)
@@ -77,18 +75,6 @@ export default {
             // console.log(ret)
             return ret
         }
-
-        // _normailzeSongs(list){ 
-        //     let ret = []
-        //     list.forEach( (item) => {
-        //         let {musicData} = item 
-                
-        //         if(musicData.songid && musicData.albummid){  
-        //             ret.push(createSong(musicData))  
-        //         }
-        //     } )
-        //     return ret
-        // }
 
 
     },

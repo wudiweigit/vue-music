@@ -1,160 +1,99 @@
 
-<!-- [  3-12.2 ] -->
-<!-- <template>
-    <div class="player">
-        <div class="mormal-player">
-            播放器
-        </div>
-        <div class="mini-player"></div>
-    </div>
-</template> -->
-
-
-<!-- <template> -->
-        <!-- [  3-12.2-4 ] v-show="playlist.length>0"   v-show="!fullScreen"-->
-    <!-- <div class="player" v-show="playlist.length>0">
-        <div class="normal-player" v-show="fullScreen">
-            播放器
-        </div>
-        <div class="mini-player" v-show="!fullScreen"></div>
-    </div>
-</template> -->
-
-
-
-
-<!-- [  3-13 ] -->
-<!-- <template>
-    <div class="player" v-show="playlist.length>0">
-        <div class="normal-player" v-show="fullScreen">
-            
-            <div class="background">
-                <img width="100%" height="100%">
-            </div>
-            <div class="top">
-                <div class="back">
-                    <i class="icon-back"></i>
-                </div>
-                <h1 class="title"></h1>
-                <h2 class="subtitle"></h2>
-            </div>
-            <div class="middle">
-                <div class="middle-l">
-                    <div class="cd-wrapper">
-                        <div class="cd">
-                            <img class="image">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="bottom">
-                <div class="operators">
-                    <div class="icon i-left">
-                        <i class="icon-sequence"></i>
-                    </div>
-                    <div class="icon i-left">
-                        <i class="icon-prev"></i>
-                    </div>
-                    <div class="icon i-center">
-                        <i class="icon-play"></i>
-                    </div>
-                    <div class="icon i-right">
-                        <i class="icon-next"></i>
-                    </div>
-                    <div class="icon i-right">
-                        <i class="icon icon-not-favorite"></i>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-        <div class="mini-player" v-show="!fullScreen">
-            <div class="icon">
-                <img width="40" height="40">
-            </div>
-            <div class="text">
-                <h2 class="name"></h2>
-                <p class="desc"></p>
-            </div>
-            <div class="control"></div>
-            <div class="control">
-                <i class="icon-playlist"></i>
-            </div>
-        </div>
-    </div>
-</template> -->
-
-
 <template>
     <div class="player" v-show="playlist.length>0">
-
-            <!-- [  3-14 ] 动画<transition name="normal,mini">-->
-            <!-- [  3-14-1 ]通过JS方式创建CSS动画要安装第三库（create-keyframe-animation）【播放器展开和收起的动画由Vue.js提供的JavaScript动画钩子再在其里面创建一个CSS3的animation】 @enter="enter"
-                    @after-enter="afterEnter"
-                    @leave="leave"
-                    @after-leave="afterLeave"-->
         <transition name="normal"
                     @enter="enter"
                     @after-enter="afterEnter"
                     @leave="leave"
                     @after-leave="afterLeave"
         >
-            <div class="normal-player" v-show="fullScreen">
-                
+            <div class="normal-player" v-show="fullScreen"> 
                 <div class="background">
-                        <!-- [  3-13-1.1 ] :src="currentSong.image"-->
                     <img width="100%" height="100%" :src="currentSong.image">
                 </div>
                 <div class="top">
-                        <!-- [  3-13-1.2 ] @click="back"-->
                     <div class="back" @click="back">
                         <i class="icon-back"></i>
                     </div>
-                    <!-- [  3-13-1.1 ] v-html="currentSong.name" v-html="currentSong.singer"-->
                     <h1 class="title" v-html="currentSong.name"></h1>
                     <h2 class="subtitle" v-html="currentSong.singer"></h2>
                 </div>
-                <div class="middle">
-                    <div class="middle-l">
-                            <!--  [  3-14-1.3 ]  ref="cdWrapper"-->
-                        <div class="cd-wrapper" ref="cdWrapper">
 
-                            <!-- [  3-16 ] 给CD添加旋转效果:class="cdCls"-->
+                <!-- [ 3-26-1.16-3] @touchstart.prevent
+                    @touchmove.prevent
+                    @touchend.prevent-->
+                <div class="middle" 
+                    @touchstart.prevent="middleTouchStart"
+                    @touchmove.prevent="middleTouchMove"
+                    @touchend.prevent="middleTouchEnd"
+                >
+                    <!-- [ 3-26-1.16-5.3] ref="middleL"-->
+                    <div class="middle-l" ref="middleL">    
+                        <div class="cd-wrapper" ref="cdWrapper">
                             <div class="cd" :class="cdCls">
-                                <!-- [  3-13-1.1 ] :src="currentSong.image"-->
-                                
                                 <img class="image" :src="currentSong.image">
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="bottom">
-                    <div class="operators">
-                        <div class="icon i-left">
-                            <i class="icon-sequence"></i>
+
+                        <!-- [ 3-28] 添加DOM结构-->
+                        <div class="playing-lyric-wrapper">
+                            <div class="playing-lyric">{{playingLyric}}</div>
                         </div>
+                    </div>
+                
 
-                        <!-- [  3-18-1.5 ] :class="disableCls"-->
-                        <!-- <div class="icon i-left"> -->
-                            <div class="icon i-left" :class="disableCls">
+                    <!-- [ 3-26-1.8 ] DOM结构-->
+                    <!-- [ 3-26-1.14 让歌词能滚动] <scroll> {:data="currentLyric && currentLyric.lines" 表示不为null时才传入scroll组件} -->
 
-                            <!-- [  3-17 ]歌曲的前进后退功能【其实是改变当前播放的索引{currentIndex}】 @click="prev"-->
-                            <!-- <i class="icon-prev"></i> -->
+                    <scroll class="middle-r" ref="lyricList" :data="currentLyric && currentLyric.lines">
+                    <!-- <div class="middle-r" ref="lyricList"> -->
+                    
+                        <div class="lyric-wrapper">
+                        <div v-if="currentLyric">
+
+                                <!-- [ 3-26-1.13 ] :class="{'current':currentLineNum===index}"   index 高亮效果-->
+
+                                <!-- <p ref="lyricLine"  class="text" v-for="line in currentLyric.lines">{{line.txt}}</p> -->
+                                <p ref="lyricLine" :class="{'current':currentLineNum===index}" class="text" v-for="(line, index) in currentLyric.lines">{{line.txt}}</p>
+                        </div>
+                        </div>
+                    <!-- </div>     -->
+                    </scroll>    
+                </div>
+                
+
+
+
+                <div class="bottom">
+                    <!-- [ 3-26-1.16 歌词和唱片页面左右切换的效果] DOM结构-->
+                    <div class="dot-wrapper">
+                        <!-- [ 3-26-1.16-2] -->
+                        <!-- <span class="dot"></span>
+                        <span class="dot"></span> -->
+                        <span class="dot" :class="{'active':currentShow==='cd'}"></span>
+                        <span class="dot" :class="{'active':currentShow==='lyric'}"></span> 
+                    </div>
+
+
+
+                    <div class="progress-wrapper"> 
+                        <span class="time time-l">{{format(currentTime)}}</span>
+                        <div class="progress-bar-wrapper"> 
+                            <progress-bar :percent="percent" @percentChange="onProgressBarChange"></progress-bar>
+                        </div>
+                        <span class="time time-r">{{format(currentSong.duration)}}</span>
+                    </div>
+                    <div class="operators">                 
+                        <div class="icon i-left" @click="changeMode">
+                            <i :class="iconMode"></i>
+                        </div>
+                        <div class="icon i-left" :class="disableCls">
                             <i @click="prev" class="icon-prev"></i>
                         </div>
                         <div class="icon i-center" :class="disableCls">
-
-                            <!-- [  3-15-1.2 ] @click="togglePlaying" 控制播放和暂停-->
-                            <!-- <i class="icon-play"></i> -->
-                            <!-- <i @click="togglePlaying" class="icon-play"></i> -->
-
-                            <!-- [  3-15-1.8 ] -->
                             <i @click="togglePlaying" :class="playIcon"></i>
-
                         </div>
                         <div class="icon i-right" :class="disableCls">
-                            <!-- [  3-17 ]歌曲的前进后退功能【其实是改变当前播放的索引{currentIndex}】 @click="next"-->
-                            <!-- <i  class="icon-next"></i> -->
                             <i @click="next" class="icon-next"></i>
                         </div>
                         <div class="icon i-right">
@@ -167,96 +106,126 @@
         </transition >
 
         <transition name="mini">
-            <!-- [  3-13-1.6 ] @click="open"-->
+     
             <div class="mini-player" v-show="!fullScreen" @click="open">
 
                 
                 <div class="icon">
-                    <!-- [  3-13-1.1 ] :src="currentSong.image"--> <!-- [  3-16 ] 给CD添加旋转效果  :class="cdCls"-->
+          
                     <img :class="cdCls" width="40" height="40" :src="currentSong.image">
                 </div>
                 <div class="text">
-                    <!-- [  3-13-1.1 ] v-html="currentSong.name" v-html="currentSong.singer"-->
+                  
                     <h2 class="name" v-html="currentSong.name"></h2>
                     <p class="desc" v-html="currentSong.singer"></p>
                 </div>
                 <div class="control">
+   
+                    <progress-circle :radius="radius" :percent="percent">
+                        <i @click.stop="togglePlaying" class="icon-mini" :class="miniIcon"></i>
+                    </progress-circle>
 
-                    <!-- [  3-15-1.10 ] <i @click="togglePlaying" :class="miniIcon"></i> 当点击时会进行弹层【因为子元素点击事件会冒泡到父元素上然而我们父元素也有点击事件打开我们的播放器使用.stop来阻止冒泡】-->
-                    <!-- <i @click="togglePlaying" :class="miniIcon"></i> -->
-                    <i @click.stop="togglePlaying" :class="miniIcon"></i>
+                    
                 </div>
                 <div class="control"> 
                     <i class="icon-playlist"></i>  
                 </div>
             </div>
         </transition>
-        <!-- [  3-18 ] 当我们快速切换歌曲时控制台会报错 【W3C提供了audio几个事件canplay/error并且提供一个标志位】 @canplay="ready" @error="error"-->
-
-        <!-- [  3-15 ]  歌曲播放功能实现  :src="currentSong.url" ref="audio"-->
-        <!-- <audio :src="currentSong.url" ref="audio"></audio> -->
-        <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error"></audio>
+        
+        <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error" @timeupdate="updateTime" @ended="end"></audio>
 
     </div>
 </template>
 
 
 <script>
-// import { mapGetters } from 'vuex'  //[  3-12.2-2 ]
 
-import { mapGetters, mapMutations } from 'vuex'  //[  3-13-1.3]
-import animations from 'create-keyframe-animation'   //[  3-14-1 ]
-import {prefixStyle} from 'common/js/dom'   //[  3-14-1.4 ]
-const transform = prefixStyle('transform')  //[  3-14-1.4 ]
+
+import { mapGetters, mapMutations } from 'vuex'  
+import animations from 'create-keyframe-animation'  
+import {prefixStyle} from 'common/js/dom'   
+const transform = prefixStyle('transform')
+const transitionDuration = prefixStyle('transitionDuration')  //[ 3-26-1.16-5.1] 
+
+import ProgressBar from 'base/progress-bar/progress-bar' 
+import ProgressCircle from 'base/progress-circle/progress-circle'
+import {playMode} from 'common/js/config'
+import {shuffle} from 'common/js/util'
+import Lyric from 'lyric-parser'// [  3-26-1.4  npm install lyric-parser] 对解码后的字符串解析成我们可以使用的数据结构
+import Scroll from 'base/scroll/scroll'   //[ 3-26-1.14 ]
 
 export default {
     data(){
         return {
-            songReady: false// [  3-18-1 ]
+            songReady: false,
+            currentTime: 0, 
+            radius: 32,
+            currentLyric: null,  //[ 3-26-1.5 ]
+            currentLineNum: 0,   //[ 3-26-1.10 ] 当前歌词所在行
+            currentShow: 'cd',// [ 3-26-1.16-1]  当前显示哪个页面
+            playingLyric: ''  //  [ 3-28-1]
         }
     },
+    components: {
+        ProgressBar, 
+        ProgressCircle,
+        Scroll,  //[ 3-26-1.14 ]
+    },
     computed: {
-        ...mapGetters([  //[  3-12.2-3 ]
-            'fullScreen',  // [  3-12.2-3 ]控制展开与收起
-            'playlist',  // [  3-12.2-3 ]控制播放器的渲染
-            'currentSong',// [  3-13-1 ]
-            'playing',  //[  3-15-1.3 ] 这里的playing是映射到getters.js中的playing所以我们可以获取当前playing的状态 
-            'currentIndex',   //[  3-17-1 ]
+        ...mapGetters([  
+            'fullScreen',  
+            'playlist', 
+            'currentSong',
+            'playing',  
+            'currentIndex',
+            'mode',
+            'sequenceList',
         ]),
 
-        playIcon(){//[  3-15-1.7 ] 根据播放状态切换图标（样式）
+        playIcon(){
             return this.playing ? 'icon-pause' : 'icon-play'
         },
-        miniIcon(){ //[  3-15-1.9 ]
+        miniIcon(){
             return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
         },
-        cdCls(){// [  3-16-1 ]
+        cdCls(){
             return this.playing ? 'play' : 'play pause'
-        }
+        },
 
+        percent(){
+            return this.currentTime / this.currentSong.duration
+        },
+
+        iconMode(){ 
+            return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'  
+        }
+ 
 
     },
     methods: {
         back(){  
-            this.setFullScreen(false)  //[  3-13-1.5 ] 点击关闭
+            this.setFullScreen(false)  
         },
         open(){
-            this.setFullScreen(true)  //[  3-13-1.7 ]
+            this.setFullScreen(true) 
         },
         ...mapMutations({
-            setFullScreen: 'SET_FULL_SCREEN',//[  3-13-1.4 ]
-            setPlayingState: 'SET_PLAYING_STATE',//[  3-15-1.4 ]这里会映射到mutations-types.js中的SET_PLAYING_STATE
+            setFullScreen: 'SET_FULL_SCREEN',
+            setPlayingState: 'SET_PLAYING_STATE',
 
-            setCurrentIndex: 'SET_CURRENT_INDEX'   //[  3-17-1.1]
+            setCurrentIndex: 'SET_CURRENT_INDEX',
+            setPlayMode: 'SET_PLAY_MODE',
+            setPlaylist: 'SET_PLAYLIST',
         }),
 
-        _getPosAndScale() {// / [  3-14-1.1 ]封装函数获取初始位置和缩放的尺寸
-            const targetWidth = 40//代表mini-player下的img宽度
-            const paddingLeft = 40//代表mini-player下的img离左边的宽度
-            const paddingBottom = 30//代表mini-player下的img离底部的高度
-            const paddingTop = 80//代表middle下的img离顶部的高度
-            const width = window.innerWidth * 0.8//代表middle下的img的宽度
-            const scale = targetWidth / width//缩放比列
+        _getPosAndScale() {
+            const targetWidth = 40
+            const paddingLeft = 40
+            const paddingBottom = 30
+            const paddingTop = 80
+            const width = window.innerWidth * 0.8
+            const scale = targetWidth / width
             const x = -(window.innerWidth / 2 - paddingLeft)
             const y = window.innerHeight - paddingTop - width / 2 - paddingBottom
             return {
@@ -266,7 +235,7 @@ export default {
             }
         },
 
-        enter(el, done) {// [  3-14-1.2 ]done其实是一个回调函数当执行时会自动跳到下一个钩子函数
+        enter(el, done) {
             const {x, y, scale} = this._getPosAndScale()
 
             let animation = {
@@ -281,99 +250,313 @@ export default {
                 }
             }
 
-            animations.registerAnimation({//注册动画
+            animations.registerAnimation({
                 name: 'move',
                 animation,
-                presets: {//预设字段
+                presets: {
                     duration: 400,
                     easing: 'linear'
                 }
             })
 
-            animations.runAnimation(this.$refs.cdWrapper, 'move', done)//运行动画
+            animations.runAnimation(this.$refs.cdWrapper, 'move', done)
         },
-        afterEnter() {//[  3-14-1.2 ]
+        afterEnter() {
             animations.unregisterAnimation('move')
             this.$refs.cdWrapper.style.animation = ''
         },
 
 
-        leave(el, done) {//[  3-14-1.2 ]
+        leave(el, done) {
             this.$refs.cdWrapper.style.transition = 'all 0.4s'
-            const {x, y, scale} = this._getPosAndScale()//获取目标位置
+            const {x, y, scale} = this._getPosAndScale()
             this.$refs.cdWrapper.style[transform] = `translate3d(${x}px,${y}px,0) scale(${scale})`
 
-            this.$refs.cdWrapper.addEventListener('transitionend', done)//动画是否完成如果完成监听transitionend事件自动自行done
+            this.$refs.cdWrapper.addEventListener('transitionend', done)
         },
-        afterLeave() {//[  3-14-1.2 ]
+        afterLeave() {
             this.$refs.cdWrapper.style.transition = ''
             this.$refs.cdWrapper.style[transform] = ''
         },
 
         togglePlaying(){
-            this.setPlayingState(!this.playing)//[  3-15-1.6 ]
-        },
+            if (!this.songReady) {
+                return
+            }
+            this.setPlayingState(!this.playing)
 
+            if (this.currentLyric) {// [ 3-37-1 ]解决当我们暂停歌曲时歌词也跟着暂停
+                this.currentLyric.togglePlay()
+            } 
+            
+        },
+// [ 3-37-2 ]解决当将歌曲切到循环播放时让其歌曲回到原来的初始位置
 
         next(){  
-            if(!this.songReady){//[  3-18-1.2 ]如果songReady没有ready时我们就不让点
-                return 
-            }
-            
-            // [  3-17-1.2 ]
-            let index = this.currentIndex + 1   
-            if(index === this.playlist.length){ //如果播放最后一首置为第一首
-                index = 0
-            }
-            this.setCurrentIndex(index)
-            if(!this.playing){//当点击下一首歌时图标没有改变所以这里进行判断来切换图标的改变
-                this.togglePlaying()
-            }
-
-
-            this.songReady = false  //[  3-18-1.3 ]点了以后将其置为false
-        },
-        prev(){// [  3-17-1.2 ]
-            
-            if(!this.songReady){//[  3-18-1.2 ]如果songReady没有ready时我们就不让点
+            if(!this.songReady){
                 return 
             }
 
-            
-            let index = this.currentIndex - 1
-            if(index === -1){    //表示第一首歌往前退
-                index = this.playlist.length - 1
+            // let index = this.currentIndex + 1   
+            // if(index === this.playlist.length){ 
+            //     index = 0
+            // }
+
+            if(this.playlist.length === 1){  
+                this.loop() //[ 3-29-1 考虑些异常情况] 解决如果歌曲列表只有一条数据的问题
+            }else{
+                let index = this.currentIndex + 1   
+                if(index === this.playlist.length){ 
+                   index = 0
+                }
             }
+            
             this.setCurrentIndex(index)
             if(!this.playing){
                 this.togglePlaying()
             }
 
-            this.songReady = false  //[  3-18-1.3 ]点了以后将其置为false
+            this.songReady = false 
+        },
+        prev(){
+            if(!this.songReady){
+                return 
+            }
+            // let index = this.currentIndex - 1
+            // if(index === -1){   
+            //     index = this.playlist.length - 1
+            // }
+            // this.setCurrentIndex(index)
+            // if(!this.playing){
+            //     this.togglePlaying()
+            // }
 
+            if(this.playlist.length === 1){ 
+                this.loop()  // [ 3-29-1 考虑些异常情况] 解决如果歌曲列表只有一条数据的问题
+            }else{
+                let index = this.currentIndex - 1
+                if(index === -1){   
+                    index = this.playlist.length - 1
+                }
+                this.setCurrentIndex(index)
+                if(!this.playing){
+                    this.togglePlaying()
+                }
+            }
+
+            this.songReady = false  
 
         },
-        ready(){ //[  3-18-1.1 ]
+        ready(){
             this.songReady = true
         },
-        // error() {
-        // },
-        error() {// [  3-18-1.4 ]处理网络错误和加载失败
+
+        error() {
             this.songReady = true
         },
-        disableCls(){// [  3-18-1.5 ]处理网络错误和加载失败来添加样式
+        disableCls(){
             return this.songReady ? '' : 'disable'
+        },
+
+        updateTime(e){
+            this.currentTime = e.target.currentTime
+        },
+        
+        format(interval){
+            interval = interval | 0
+            const minute = interval/60 | 0
+           
+            const second = this._pad(interval % 60 )  
+            return `${minute}:${second}`
+        },
+        _pad(num, n = 2){ 
+            let len = num.toString().length  
+            while(len < n){
+                num = '0' + num
+                len++
+            }
+            return num
+        },
+        
+        onProgressBarChange(percent) {
+            // this.$refs.audio.currentTime = this.currentSong.duration * percent
+
+            const currentTime = this.currentSong.duration * percent  //  [ 3-27-1  ]解决滑动进度条歌词也跟着跳动
+            this.$refs.audio.currentTime = currentTime   //  [ 3-27-1  ]
+            if(!this.playing){
+                this.togglePlaying()
+            }
+
+            if(this.currentLyric){  //  [ 3-27-1  ]
+                this.currentLyric.seek(currentTime * 1000)
+            }
+        },
+
+        changeMode(){ 
+            const mode = (this.mode + 1) % 3
+
+            this.setPlayMode(mode) 
+            let list = null 
+            if(mode === playMode.random){ 
+                list = shuffle(this.sequenceList)
+            }else{  
+                list = this.sequenceList
+            }
+            this.setPlaylist(list)
+            this.resetCurrentIndex(list) 
+        },
+        
+        resetCurrentIndex(list){ 
+            let index = list.findIndex((item) => { 
+                return item.id === this.currentSong.id
+            })
+            this.setCurrentIndex(index)
+        },
+        
+        end(){// [ 3-24-1 ]
+            if(this.mode === playMode.loop){ 
+                this.loop()
+            }else { 
+                this.next() 
+            }
+            
+        },
+        loop(){
+            this.$refs.audio.currentTime = 0
+            this.$refs.audio.play()
+            
+            if(this.currentLyric){// [  3-27-2  ]  解决当暂停歌曲时切换成循环模式并移动进度条到末尾歌词重新回到初始位置  (调用currentLyric提供的seek方法)
+                this.currentLyric.seek(0)
+            }
+
+        },
+
+        // getLyric(){  //[ 3-26-1.6 ]  获取歌词
+        //     this.currentSong.getLyric().then((lyric) => {
+        //         // this.currentLyric = new Lyric(lyric)
+
+        //         this.currentLyric = new Lyric(lyric, this.handleLyric)  //[ 3-26-1.12 ] 初始化时传个回调函数this.handleLyric
+
+        //         if(this.playing){  // [ 3-26-1.9 ]如果歌曲在播放执行下面操作
+        //             this.currentLyric.play()
+        //         }
+        //         console.log(this.currentLyric)
+        //     })
+        // },
+
+        getLyric(){  
+            this.currentSong.getLyric().then((lyric) => {
+                this.currentLyric = new Lyric(lyric, this.handleLyric)
+                if(this.playing){  
+                    this.currentLyric.play()
+                }
+            }).catch(() => {   //[ 3-29 考虑些异常情况]  getLyric获取不到歌词要做些清理操作
+                this.currentLyric = null
+                this.playingLyric = ''
+                this.currentLineNum = 0
+            })
+        },
+
+        
+        handleLyric({lineNum, txt}){  //[ 3-26-1.11 ]当我们歌词每一行发生改变时执行
+            this.currentLineNum = lineNum
+            
+            if (lineNum > 5) {// [ 3-26-1.15 ]
+                let lineEl = this.$refs.lyricLine[lineNum - 5]
+                this.$refs.lyricList.scrollToElement(lineEl, 1000)
+            } else {
+                this.$refs.lyricList.scrollTo(0, 0, 1000) //在5行之内直接滚动到顶部
+            }
+
+            this.playingLyric = txt  //  [ 3-28-2]
+        },
+        
+        middleTouchStart(e) {  // [ 3-26-1.16-4]
+            this.touch.initiated = true//设置标志位
+            const touch = e.touches[0]
+            this.touch.startX = touch.pageX//计入X坐标
+            this.touch.startY = touch.pageY//计入Y坐标
+        },
+
+        middleTouchMove(e) {// [ 3-26-1.16-4]
+            if (!this.touch.initiated) {
+            return
+            }
+            const touch = e.touches[0]
+            const deltaX = touch.pageX - this.touch.startX
+            const deltaY = touch.pageY - this.touch.startY
+            if (Math.abs(deltaY) > Math.abs(deltaX)) {//纵轴方向滚动的偏差绝对值大于横轴方向滚动的偏差绝对值什么都不做
+                return
+            }
+            const left = this.currentShow === 'cd' ? 0 : -window.innerWidth   // 0:默认起始位置 -widow.innerWidth:-屏幕宽度
+
+            const offsetWidth = Math.min(0, Math.max(-window.innerWidth, left + deltaX))  //width是一个0到负值之间的数
+            this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px,0,0)`   //lyricList实际上是个scroll组件他是个Vue组件是没法操作DOM只能通过$el才能访问DOM
+
+            this.touch.percent = Math.abs(offsetWidth / window.innerWidth)//[ 3-26-1.16-5]滑动的比例（列表向左滚动的宽度 / 整个屏幕的宽度）
+
+            this.$refs.lyricList.$el.style[transitionDuration] = 0  //[ 3-26-1.16-5.2]
+            this.$refs.middleL.style.opacity = 1 - this.touch.percent  //[ 3-26-1.16-5.3]
+            this.$refs.middleL.style[transitionDuration] = 0  //[ 3-26-1.16-5.3]
+
+        },
+
+        middleTouchEnd(){// [ 3-26-1.16-5]  决定歌词停到哪个位置（是滚回去还是滚到左边来）
+            
+            let offsetWidth
+            let opacity   //[ 3-26-1.16-5.3]
+            if(this.currentShow === 'cd'){  // 从右向左滑
+                if(this.touch.percent > 0.1){ //如果大于10%就滑动
+                    offsetWidth = -window.innerWidth
+                    opacity = 0  //[ 3-26-1.16-5.3]
+                    this.currentShow = 'lyric'
+                }else{
+                    offsetWidth = 0
+                    opacity = 1   //[ 3-26-1.16-5.3]
+                }
+            }else{ //从左向右滑
+                if(this.touch.percent < 0.9){
+                    offsetWidth = 0
+                    this.currentShow = 'cd'
+                    opacity = 1   //[ 3-26-1.16-5.3]
+                }else{
+                    offsetWidth = -window.innerWidth
+                    opacity = 0   //[ 3-26-1.16-5.3]
+                }
+            }
+            const time = 300  //[ 3-26-1.16-5.1] 
+            this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px,0,0)`
+            this.$refs.lyricList.$el.style[transitionDuration] = `${time}ms`  //[ 3-26-1.16-5.1] 
+            this.$refs.middleL.style.opacity = opacity  //[ 3-26-1.16-5.3]
+            this.$refs.middleL.style[transitionDuration] = `${time}ms`  //[ 3-26-1.16-5.3]
         }
+
+
+
     },
 
     watch: {
-        currentSong(){//当currentSong发生改变时去调用（如何让它播放要调用auto提供拍的play方法）
-            // this.$refs.audio.play() //[  3-15-1 ]// 这里会出现报错因为我们在调用play()时同时请求src这时我们的DOM并没有渲染所以我们要等渲染完成后再调play()【这里给一个延迟】
-            this.$nextTick(( ) =>{//[  3-15-1.1 ]
+    
+        
+        currentSong(newSong, oldSong){  
+            if(newSong.id === oldSong.id){
+                return
+            }
+
+            if(this.currentLyric){//[ 3-27  ]解决当切换歌曲时歌词会一直跳动
+                this.currentLyric.stop()
+            }
+
+            // this.$nextTick(( ) =>{ 
+            setTimeout(( ) =>{   // [  3-29-2  ]不使用this.$nextTick解决在手机浏览器使用时从后台切回前台时歌曲正常播放
                 this.$refs.audio.play()
-            })  
+
+                // this.currentSong.getLyric() //[  3-26-1.1]
+                this.getLyric()  //[ 3-26-1.7 ]
+            }, 1000) 
         },
-        playing(newPlaying){  //[  3-15-1.5 ] 获取当前的状态  这两个都是audio实例的方法play/pause()
+           
+        playing(newPlaying){  
             const audio = this.$refs.audio
             this.$nextTick(( ) =>{
                 newPlaying ? audio.play() : audio.pause()
@@ -382,6 +565,9 @@ export default {
         }
     },
 
+    created() {  // [ 3-26-1.16-]
+        this.touch = {}
+    },
 
 }
 </script>

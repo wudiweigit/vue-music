@@ -160,6 +160,11 @@ export default {
             }else if(index > this.listHeight.length -2 ){
                 index = this.listHeight.length - 2
             }
+        },
+
+        
+        refresh(){ // [  3-30-1.3  ]
+            this.$refs.listview.refresh()
         }
     },
     watch: {
